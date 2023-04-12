@@ -1,5 +1,12 @@
 # Visual Studio 2015 user specific files
 .vs/
+.vscode/ipch
+
+# Visual Studio 2015 database file
+*.VC.db
+
+# Visual Studio Code files
+.vscode/*
 
 # Compiled Object files
 *.slo
@@ -40,6 +47,13 @@
 *.sdf
 *.VC.db
 *.VC.opendb
+*.pri
+*.kdev4
+*.workspace
+*.pro
+*.code-workspace
+.idea/*
+.kdev4/*
 
 # Precompiled Assets
 SourceArt/**/*.png
@@ -72,3 +86,15 @@ Plugins/*/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+#Ignore node modules
+Node/node_modules/*
+
+logs/
+test-output/
+UE4
+
+ArchivedBuilds
+version.json
+/vcpkg_installed
+Node/package-lock.json
