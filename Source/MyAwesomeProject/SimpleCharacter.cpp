@@ -10,25 +10,30 @@ ASimpleCharacter::ASimpleCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 }
-
-// Called when the game starts or when spawned
 void ASimpleCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	CurrentHealth = DefaultHealth;
 }
 
-// Called every frame
-void ASimpleCharacter::Tick(float DeltaTime)
+void ASimpleCharacter::InflictDamage()
 {
-	Super::Tick(DeltaTime);
-
+	UpdateHealth(DamageFactor);
 }
 
-// Called to bind functionality to input
-void ASimpleCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ASimpleCharacter::RegenerateHealth()
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
+	UpdateHealth(HealthFactor);
 }
+
+void ASimpleCharacter::ResetHealth()
+{
+	CurrentHealth = RespawnHealth;
+}
+
+void ASimpleCharacter::UpdateHealth(int Factor)
+{
+	CurrentHealth = FMath::Max(0, FMath::Min(CurrentHealth + Factor, DefaultHealth));
+}
+
 
