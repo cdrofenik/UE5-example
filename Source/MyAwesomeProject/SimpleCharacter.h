@@ -16,39 +16,43 @@ public:
 	ASimpleCharacter();
 
 public:
+	/** Getter for Max Health.*/
+	UFUNCTION(BlueprintPure, Category = "Health")
+	FORCEINLINE float GetMaxHealth() const { return MaxHealth; }
 
-	//Decrease Health by 10 when hit by projectile
-	UFUNCTION(BlueprintCallable, Category="Damage")
-	void InflictDamage();
+	/** Getter for Current Health.*/
+	UFUNCTION(BlueprintPure, Category = "Health")
+	FORCEINLINE float GetCurrentHealth() const { return CurrentHealth; }
 
-	// When collectible is reached, increase health by 20
-	UFUNCTION(BlueprintCallable, Category="Regeneration")
-	void RegenerateHealth();
+	/** Setter for Current Health. Clamps the value between 0 and MaxHealth and calls OnHealthUpdate. Should only be called on the server.*/
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void SetCurrentHealth(float healthValue);
 
-	//When player has reached health 0, reset health to 50
-	UFUNCTION(BlueprintCallable, Category = "Death")
-	void ResetHealth();
+	/** Event for taking damage.*/
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void InflictDamage(float DamageTaken);
+
+	/** Event for taking damage. Overridden from APawn.*/
+	UFUNCTION(BlueprintCallable, Category = "Health")
+	void RecoverHealth(float HealthHealed);
+
 protected:
+	/** Response to health being updated. Called on the server immediately after modification, and on clients in response to a RepNotify*/
+	void OnHealthUpdate();
 
-	virtual void BeginPlay();
+	/** Property replication */
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Status")
-	int CurrentHealth = 0;
+	/** The player's maximum health. This is the highest value of their health can be. This value is a value of the player's health, which starts at when spawned.*/
+	UPROPERTY(EditDefaultsOnly, Category = "Health")
+	float MaxHealth;
 
-private:
-	//Update health, check if in range
-	void UpdateHealth(int Factor);
+	/** The player's current health. When reduced to 0, they are considered dead.*/
+	UPROPERTY(ReplicatedUsing = OnRep_CurrentHealth)
+	float CurrentHealth;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Defaults")
-	int DefaultHealth = 100;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Defaults")
-	int RespawnHealth = 50;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Defaults")
-	int DamageFactor = -10;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Defaults")
-	int HealthFactor = 20;
+	/** RepNotify for changes made to current health.*/
+	UFUNCTION()
+	void OnRep_CurrentHealth();
 
 };
